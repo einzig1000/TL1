@@ -86,6 +86,12 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
     #出力するファイルの拡張子
     filename_ext = ".json"
 
+    def write_and_print(self, file, str):
+        print(str)
+
+        file.write(str)
+        file.write('\n')
+
     #メニューを実行したときに呼ばれるコールバック関数
     def execute(self, context):
         print("シーン情報をExportします")
@@ -129,7 +135,9 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
         file.write("\n")
         #カスタムプロパティ'file_name'
         if "file_name" in object:
-            file.write(indent + "N %s" % object["file_name"])
+            self.write_and_print(file, indent + "N %s" % object["file_name"])
+        self.write_and_print(file, indent + 'END')
+        self.write_and_print(file, '')
 
         #カスタムプロパティ'collider'
         if "collider" in object:
@@ -275,6 +283,16 @@ class OBJECT_PT_file_name(bpy.types.Panel):
     #サブメニューの描画
     def draw(self, context):
         #パネルに項目を追加
+        self.layout.label(text="Hello")
+        self.layout.separator()
+        self.layout.label(text="Hello2", icon="MESH_CUBE")
+
+        self.layout.operator(MYADDON_OT_stretch_vertex.bl_idname, text=MYADDON_OT_stretch_vertex.bl_label)
+        self.layout.operator(MYADDON_OT_create_ico_sphere.bl_idname, text=MYADDON_OT_create_ico_sphere.bl_label)
+        self.layout.operator(MYADDON_OT_export_scene.bl_idname, text=MYADDON_OT_export_scene.bl_label)
+
+
+
         if ("file_name") in context.object:
             #既にプロパティがあれば、プロパティを表示
             self.layout.prop(context.object, '["file_name"]', text = self.bl_label)
